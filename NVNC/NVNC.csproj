@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A749DE42-B732-4541-86BE-2FF3CBCB5EC4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NVNC</RootNamespace>
+    <AssemblyName>NVNC</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Encodings\ZlibRectangle.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Readers\BigEndianBinaryReader.cs" />
+    <Compile Include="Utils\ScreenTree\QuadNode.cs" />
+    <Compile Include="Utils\ScreenTree\QuadTree.cs" />
+    <Compile Include="Utils\Rectangle2.cs" />
+    <Compile Include="Utils\ScreenHandler.cs" />
+    <Compile Include="Writers\BigEndianBinaryWriter.cs" />
+    <Compile Include="EncodedRectangleFactory.cs" />
+    <Compile Include="Encodings\CopyRectRectangle.cs" />
+    <Compile Include="Encodings\CoRRE.cs" />
+    <Compile Include="Encodings\CoRreRectangle.cs" />
+    <Compile Include="Encodings\EncodedRectangle.cs" />
+    <Compile Include="Encodings\HextileRectangle.cs" />
+    <Compile Include="Encodings\RawRectangle.cs" />
+    <Compile Include="Encodings\RreRectangle.cs" />
+    <Compile Include="Encodings\ZrleRectangle.cs" />
+    <Compile Include="Framebuffer.cs" />
+    <Compile Include="Utils\PixelGrabber.cs" />
+    <Compile Include="VncHost.cs" />
+    <Compile Include="Utils\Robot.cs" />
+    <Compile Include="VncServer.cs" />
+    <Compile Include="Writers\ZlibCompressedWriter.cs" />
+    <Compile Include="zlib.NET\Adler32.cs" />
+    <Compile Include="zlib.NET\Deflate.cs" />
+    <Compile Include="zlib.NET\InfBlocks.cs" />
+    <Compile Include="zlib.NET\InfCodes.cs" />
+    <Compile Include="zlib.NET\Inflate.cs" />
+    <Compile Include="zlib.NET\InfTree.cs" />
+    <Compile Include="zlib.NET\StaticTree.cs" />
+    <Compile Include="zlib.NET\SupportClass.cs" />
+    <Compile Include="zlib.NET\Tree.cs" />
+    <Compile Include="zlib.NET\ZInputStream.cs" />
+    <Compile Include="zlib.NET\Zlib.cs" />
+    <Compile Include="zlib.NET\ZOutputStream.cs" />
+    <Compile Include="zlib.NET\ZStream.cs" />
+    <Compile Include="zlib.NET\ZStreamException.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
