@@ -4,6 +4,7 @@
 # Custom files present locally
 VNC#/
 NVNC/Repeater_change/
+NVNC/RobotClient.cs
 
 # User-specific files
 *.suo
