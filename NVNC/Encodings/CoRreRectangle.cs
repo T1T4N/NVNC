@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using NVNC.Utils;
 
 namespace NVNC.Encodings
@@ -27,7 +28,7 @@ namespace NVNC.Encodings
     public sealed class CoRreRectangle : EncodedRectangle
     {
         private int[] pixels;
-        public CoRreRectangle(VncHost rfb, Framebuffer framebuffer, int[] pixels, Rectangle2 rectangle)
+        public CoRreRectangle(VncHost rfb, Framebuffer framebuffer, int[] pixels, Rectangle rectangle)
             : base(rfb, framebuffer, rectangle)
         {
             this.pixels = pixels;
@@ -68,7 +69,7 @@ namespace NVNC.Encodings
                                 currentW = 0xFF;
                             if (currentH > 0xFF)
                                 currentH = 0xFF;
-                            Rectangle2 rc = new Rectangle2(x + currentX, y + currentY, currentW, currentH);
+                            Rectangle rc = new Rectangle(x + currentX, y + currentY, currentW, currentH);
                             rect = new CoRRE(rfb, framebuffer, pixels, rc);
 
                             //problem ... WHY ?

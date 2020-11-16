@@ -55,7 +55,6 @@
     <Compile Include="Readers\BigEndianBinaryReader.cs" />
     <Compile Include="Utils\ScreenTree\QuadNode.cs" />
     <Compile Include="Utils\ScreenTree\QuadTree.cs" />
-    <Compile Include="Utils\Rectangle2.cs" />
     <Compile Include="Utils\ScreenHandler.cs" />
     <Compile Include="Writers\BigEndianBinaryWriter.cs" />
     <Compile Include="EncodedRectangleFactory.cs" />

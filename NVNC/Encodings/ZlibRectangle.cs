@@ -27,7 +27,7 @@ namespace NVNC.Encodings
     public sealed class ZlibRectangle : EncodedRectangle
     {
         private int[] pixels;
-        public ZlibRectangle(VncHost rfb, Framebuffer framebuffer, int[] pixels, Rectangle2 rectangle)
+        public ZlibRectangle(VncHost rfb, Framebuffer framebuffer, int[] pixels, Rectangle rectangle)
             : base(rfb, framebuffer, rectangle)
         {
             this.pixels = pixels;

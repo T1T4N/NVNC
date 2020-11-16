@@ -16,6 +16,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
+using System.Drawing;
 using NVNC.Utils;
 
 namespace NVNC.Encodings
@@ -26,11 +27,11 @@ namespace NVNC.Encodings
     public abstract class EncodedRectangle
     {
         protected VncHost rfb;
-        protected Rectangle2 rectangle;
+        protected Rectangle rectangle;
         protected Framebuffer framebuffer;
         public byte[] bytes { get; protected set; }
 
-        public EncodedRectangle(VncHost rfb, Framebuffer framebuffer, Rectangle2 rectangle)
+        public EncodedRectangle(VncHost rfb, Framebuffer framebuffer, Rectangle rectangle)
         {
             this.rfb = rfb;
             this.framebuffer = framebuffer;
@@ -40,7 +41,7 @@ namespace NVNC.Encodings
         /// <summary>
         /// Gets the rectangle that needs to be encoded.
         /// </summary>
-        public Rectangle2 UpdateRectangle
+        public Rectangle UpdateRectangle
         {
             get
             {

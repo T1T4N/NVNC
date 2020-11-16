@@ -16,13 +16,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
+using System.Drawing;
 using NVNC.Utils;
 
 namespace NVNC.Encodings
 {
     public class CoRRE : RreRectangle
     {
-        public CoRRE(VncHost rfb, Framebuffer framebuffer, int[] pixels, Rectangle2 rectangle)
+        public CoRRE(VncHost rfb, Framebuffer framebuffer, int[] pixels, Rectangle rectangle)
             : base(rfb, framebuffer, pixels, rectangle)
         {
             this.pixels = pixels;

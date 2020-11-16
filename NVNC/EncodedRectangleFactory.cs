@@ -86,13 +86,13 @@ namespace NVNC
         /// <param name="rectangle">A node object from the Screen Handler defining the bounds of the rectangle and the pixel data. IT SHOULD BE CONSIDERED LOCALLY AGAINST pixels param, not globally against the screen size</param>
         /// <param name="encoding">An Integer indicating the encoding type to be used for this rectangle.  Used to determine the type of EncodedRectangle to create.</param>
         /// <returns></returns>
-        public EncodedRectangle Build(Rectangle2 rectangle, VncHost.Encoding encoding)
+        public EncodedRectangle Build(Rectangle rectangle, VncHost.Encoding encoding)
         {
-            Bitmap bmp = PixelGrabber.CreateScreenCapture(rectangle.ToRectangle());
+            Bitmap bmp = PixelGrabber.CreateScreenCapture(rectangle);
             int[] pixels = PixelGrabber.GrabPixels(bmp, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height, bmp.PixelFormat);
             return Build(rectangle, pixels, encoding);
         }
-        public EncodedRectangle Build(Rectangle2 rectangle, int[] pixels, VncHost.Encoding encoding)
+        public EncodedRectangle Build(Rectangle rectangle, int[] pixels, VncHost.Encoding encoding)
         {
             EncodedRectangle e;
             switch (encoding)

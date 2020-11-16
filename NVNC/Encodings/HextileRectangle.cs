@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using NVNC.Utils;
 
 namespace NVNC.Encodings
@@ -50,7 +51,7 @@ namespace NVNC.Encodings
             public int h;
         }
 
-        public HextileRectangle(VncHost rfb, Framebuffer framebuffer, int[] pixels, Rectangle2 rectangle)
+        public HextileRectangle(VncHost rfb, Framebuffer framebuffer, int[] pixels, Rectangle rectangle)
             : base(rfb, framebuffer, rectangle)
         {
             this.pixels = pixels;

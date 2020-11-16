@@ -27,7 +27,7 @@ namespace NVNC.Encodings
     public sealed class RawRectangle : EncodedRectangle
     {
         private int[] pixels;
-        public RawRectangle(VncHost rfb, Framebuffer framebuffer, int[] pixels, Rectangle2 rectangle)
+        public RawRectangle(VncHost rfb, Framebuffer framebuffer, int[] pixels, Rectangle rectangle)
             : base(rfb, framebuffer, rectangle)
         {
             this.pixels = pixels;

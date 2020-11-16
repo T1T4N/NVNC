@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using NVNC.Utils;
 
 namespace NVNC.Encodings
@@ -27,7 +28,7 @@ namespace NVNC.Encodings
     public class RreRectangle : EncodedRectangle
     {
         protected int[] pixels;
-        public RreRectangle(VncHost rfb, Framebuffer framebuffer, int[] pixels, Rectangle2 rectangle)
+        public RreRectangle(VncHost rfb, Framebuffer framebuffer, int[] pixels, Rectangle rectangle)
             : base(rfb, framebuffer, rectangle)
         {
             this.pixels = pixels;

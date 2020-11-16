@@ -17,6 +17,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using NVNC.Utils;
 
 namespace NVNC.Encodings
@@ -29,7 +30,7 @@ namespace NVNC.Encodings
         private const int TILE_WIDTH = 64;
         private const int TILE_HEIGHT = 64;
         private int[] pixels;
-        public ZrleRectangle(VncHost rfb, Framebuffer framebuffer, int[] pixels, Rectangle2 rectangle)
+        public ZrleRectangle(VncHost rfb, Framebuffer framebuffer, int[] pixels, Rectangle rectangle)
             : base(rfb, framebuffer, rectangle)
         {
             this.pixels = pixels;
@@ -59,7 +60,7 @@ namespace NVNC.Encodings
                         int tileW = TILE_WIDTH;
                         tileW = Math.Min(tileW, x + w - currentX);
 
-                        byte subencoding = (rectangle.IsSolidColor) ? (byte)1 : (byte)0;
+                        byte subencoding = 0;//(rectangle.IsSolidColor) ? (byte)1 : (byte)0;
                         ms.WriteByte(subencoding);
 
                         if (subencoding == 0)
@@ -81,19 +82,19 @@ namespace NVNC.Encodings
                                 ms.Write(pbytes, 0, pbytes.Length);
                             }
                         }
-                        else
-                        {
-                            int b = 0;
-                            int pixel = rectangle.SolidColor;
-                            byte[] pbytes = new byte[3];
+                        //else
+                        //{
+                        //    int b = 0;
+                        //    int pixel = rectangle.SolidColor;
+                        //    byte[] pbytes = new byte[3];
 
-                            pbytes[b++] = (byte)(pixel & 0xFF);
-                            pbytes[b++] = (byte)((pixel >> 8) & 0xFF);
-                            pbytes[b++] = (byte)((pixel >> 16) & 0xFF);
-                            //bytes[b++] = (byte)((pixel >> 24) & 0xFF);
+                        //    pbytes[b++] = (byte)(pixel & 0xFF);
+                        //    pbytes[b++] = (byte)((pixel >> 8) & 0xFF);
+                        //    pbytes[b++] = (byte)((pixel >> 16) & 0xFF);
+                        //    //bytes[b++] = (byte)((pixel >> 24) & 0xFF);
 
-                            ms.Write(pbytes, 0, pbytes.Length);
-                        }
+                        //    ms.Write(pbytes, 0, pbytes.Length);
+                        //}
                     }
                 }
                 byte[] uncompressed = ms.ToArray();

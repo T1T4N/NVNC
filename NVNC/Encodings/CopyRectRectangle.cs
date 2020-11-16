@@ -16,6 +16,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
+using System.Drawing;
 using NVNC.Utils;
 
 namespace NVNC.Encodings
@@ -25,7 +26,7 @@ namespace NVNC.Encodings
     /// </summary>
     public sealed class CopyRectRectangle : EncodedRectangle
     {
-        public CopyRectRectangle(VncHost rfb, Framebuffer framebuffer, Rectangle2 rectangle)
+        public CopyRectRectangle(VncHost rfb, Framebuffer framebuffer, Rectangle rectangle)
             : base(rfb, framebuffer, rectangle)
         {
         }
