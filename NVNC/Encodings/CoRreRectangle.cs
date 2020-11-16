@@ -38,8 +38,8 @@ namespace NVNC.Encodings
 
         public override void Encode()
         {
-            int x = 0;//rectangle.X;
-            int y = 0;//rectangle.Y;
+            int x = rectangle.X;
+            int y = rectangle.Y;
             int w = rectangle.Width;
             int h = rectangle.Height;
 

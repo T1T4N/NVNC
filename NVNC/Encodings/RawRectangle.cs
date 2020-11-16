@@ -41,7 +41,10 @@ namespace NVNC.Encodings
                 framebuffer[i] = pixels[i];
              */
             if(bytes == null)
-                bytes = PixelGrabber.GrabPixels(pixels, new Rectangle(0,0,rectangle.Width, rectangle.Height), framebuffer);
+            {
+                //bytes = PixelGrabber.GrabPixels(pixels, new Rectangle(0, 0, rectangle.Width, rectangle.Height), framebuffer);
+                bytes = PixelGrabber.GrabPixels(pixels, rectangle, framebuffer);
+            }
 
         }
         public override void WriteData()
