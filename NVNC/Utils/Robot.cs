@@ -107,7 +107,10 @@ namespace NVNC.Utils
                     Trace.WriteLine(keys);
                     try
                     {
+                        // https://social.msdn.microsoft.com/Forums/en-US/46f2eca7-57f2-4bf5-9db7-3979cffc8b6f/sendkeys-fails-with-nullreferenceexception
+#if !DEBUG
                         System.Windows.Forms.SendKeys.SendWait(keys);
+#endif
                     }
                     catch (Exception ex)
                     {
