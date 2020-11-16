@@ -17,7 +17,7 @@
 
 using System;
 using System.Drawing;
-using NVNC.Utils;
+using System.Threading;
 
 namespace NVNC
 {
@@ -78,8 +78,9 @@ namespace NVNC
                 throw new ArgumentNullException("Port", "The VNC Server port cannot be zero.");
             Console.WriteLine("Started VNC Server at port: " + Port);
 
-            host = new VncHost(Port, Name, new ScreenHandler(new Rectangle(0, 0, ScreenSize().Width, ScreenSize().Height), true));
-            
+            host = new VncHost(Port, Name);
+            host.Start();
+
             host.WriteProtocolVersion();
             Console.WriteLine("Wrote Protocol Version");
 

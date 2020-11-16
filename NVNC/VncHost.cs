@@ -19,18 +19,18 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Drawing;
 using System.Collections.Generic;
+using System.Threading;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using NVNC.Encodings;
-using NVNC.Readers;
 using NVNC.Writers;
 using NVNC.Utils;
-using NVNC.Utils.ScreenTree;
+using NVNC.Readers;
+using System.Diagnostics;
 
 namespace NVNC
 {
@@ -42,7 +42,7 @@ namespace NVNC
         /// <summary>
         /// RFB Encoding constants.
         /// </summary>
-        public enum Encoding
+        public enum Encoding : int
         {
             //encodings
             RawEncoding = 0,  //working
@@ -89,7 +89,6 @@ namespace NVNC
 
         public string CutText;
 
-        public ScreenHandler screenHandler;
         protected Socket localClient;		// Network object used to communicate with host
         protected TcpListener serverSocket;
 
@@ -97,16 +96,23 @@ namespace NVNC
         protected BinaryReader reader;	// Integral rather than Byte values are typically
         protected BinaryWriter writer;	// sent and received, so these handle this.
         protected ZlibCompressedWriter zlibWriter; //The Zlib Stream Writer used for Zlib and ZRLE encodings
-        
+
         public bool isRunning;
+        public bool isConnected
+        {
+            get
+            {
+                return localClient.Connected;
+            }
+        }
 
         //Port property
         public int Port { get; set; }
 
         public string DisplayName;
 
-        private HashSet<Socket> clients = new HashSet<Socket>();
-        public ICollection<Socket> Clients
+        private List<Socket> clients = new List<Socket>();
+        public List<Socket> Clients
         {
             get
             {
@@ -123,7 +129,6 @@ namespace NVNC
         /// <returns>Returns a enum representation of the encoding.</returns>
         public Encoding GetPreferredEncoding()
         {
-            //TODO: If our preferred encoding is not found, use the best one the client sent
             Encoding prefEnc = Encoding.ZrleEncoding;
             try
             {
@@ -138,14 +143,10 @@ namespace NVNC
             return prefEnc;
         }
 
-
-        public VncHost(int port, string displayname, ScreenHandler sc)
+        public VncHost(int port, string displayname)
         {
             Port = port;
             DisplayName = displayname;
-            screenHandler = sc;
-            Start();
-
         }
 
         /// <summary>
@@ -156,7 +157,7 @@ namespace NVNC
         {
             get
             {
-                return verMajor + (verMinor * 0.1f);
+                return (float)verMajor + (verMinor * 0.1f);
             }
         }
 
@@ -578,34 +579,51 @@ namespace NVNC
             }
             Trace.WriteLine("Bounds OK!");
 
-            HashSet<EncodedRectangle> rectangles = new HashSet<EncodedRectangle>();
+
+            List<EncodedRectangle> lst = new List<EncodedRectangle>();
+            //List<byte[]> lstHash = new List<byte[]>();
             try
             {
-                Stopwatch tip = Stopwatch.StartNew();
-                EncodedRectangleFactory factory = new EncodedRectangleFactory(this, fb);
-             
-                ICollection<QuadNode> list = screenHandler.GetChange();
-                
-                Trace.WriteLine(list.Count + " rectangles to encode");
-                foreach (QuadNode iter in list)
-                {
-                    Trace.WriteLine(iter.ToString());
-                    EncodedRectangle localRect = factory.Build(iter, GetPreferredEncoding());
-                    localRect.Encode();
+                //Console.WriteLine("Framebuffer: ");
+                //fb.Print();
+                //Console.ReadLine();
 
-                    rectangles.Add(localRect);
-                }
-                Trace.WriteLine("Encoding took: " + tip.Elapsed);
+                System.Diagnostics.Stopwatch tip = System.Diagnostics.Stopwatch.StartNew();
+                EncodedRectangleFactory factory = new EncodedRectangleFactory(this, fb);
+                /*
+                int i = width / 4;
+                int j = height / 4;
+                int m = 0;
+                Rectangle lRect = Rectangle.Empty;
+                for (int k = 0; k < 4; k++)
+                    for (m = 0; m < 4; m++)
+                    {
+                        lRect = new Rectangle();
+                        lRect.X = (i * k);
+                        lRect.Y = (j * m);
+                        lRect.Width = i;
+                        lRect.Height = j;
+                        //lRect = PixelGrabber.AlignRectangle(lRect, width, height);
+                        
+                        EncodedRectangle localRect = factory.Build(lRect, GetPreferredEncoding());
+                        localRect.Encode();
+                        lst.Add(localRect);
+                    }
+                 */
+                EncodedRectangle localRect = factory.Build(new Rectangle(x, y, width, height), GetPreferredEncoding());
+                localRect.Encode();
+
+                lst.Add(localRect);
+                Console.WriteLine("Encoding took: " + tip.Elapsed);
             }
             catch (Exception localException)
             {
-                Console.WriteLine(localException.StackTrace);
+                Console.WriteLine(localException.StackTrace.ToString());
                 if (localException is IOException)
-                { Close(); return; }
+                { this.Close(); return; }
             }
-            if (rectangles.Count != 0)
-                WriteFrameBufferUpdate(rectangles);
-
+            if (lst.Count != 0)
+                WriteFrameBufferUpdate(lst.ToArray());
         }
 
         /// <summary>

@@ -19,7 +19,6 @@ using System;
 using System.Drawing;
 using NVNC.Encodings;
 using NVNC.Utils;
-using NVNC.Utils.ScreenTree;
 
 namespace NVNC
 {
@@ -43,41 +42,6 @@ namespace NVNC
 
             this.rfb = rfb;
             this.framebuffer = framebuffer;
-        }
-
-        
-        public EncodedRectangle Build(QuadNode node, VncHost.Encoding encoding)
-        {
-            int[] pixels = node.NodeData;
-            EncodedRectangle e;
-            switch (encoding)
-            {
-                case VncHost.Encoding.RawEncoding:
-                    e = new RawRectangle(rfb, framebuffer, pixels, node.Bounds);
-                    break;
-                case VncHost.Encoding.CopyRectEncoding:
-                    e = new CopyRectRectangle(rfb, framebuffer, node.Bounds);
-                    break;
-                case VncHost.Encoding.RreEncoding:
-                    e = new RreRectangle(rfb, framebuffer, pixels, node.Bounds);
-                    break;
-                case VncHost.Encoding.CoRreEncoding:
-                    e = new CoRreRectangle(rfb, framebuffer, pixels, node.Bounds);
-                    break;
-                case VncHost.Encoding.HextileEncoding:
-                    e = new HextileRectangle(rfb, framebuffer, pixels, node.Bounds);
-                    break;
-                case VncHost.Encoding.ZrleEncoding:
-                    e = new ZrleRectangle(rfb, framebuffer, pixels, node.Bounds);
-                    break;
-                case VncHost.Encoding.ZlibEncoding:
-                    e = new ZlibRectangle(rfb, framebuffer, pixels, node.Bounds);
-                    break;
-                default:
-                    // Sanity check
-                    throw new Exception("Unsupported Encoding Format received: " + encoding + ".");
-            }
-            return e;
         }
         
         /// <summary>
