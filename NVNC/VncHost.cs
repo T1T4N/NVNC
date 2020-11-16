@@ -110,6 +110,8 @@ namespace NVNC
         public int Port { get; set; }
 
         public string DisplayName;
+        public string RepeaterHost;
+        public string RepeaterID;
 
         private List<Socket> clients = new List<Socket>();
         public List<Socket> Clients
@@ -147,6 +149,14 @@ namespace NVNC
         {
             Port = port;
             DisplayName = displayname;
+        }
+
+        public VncHost(int port, string displayname, string repeaterHost, string repeaterID)
+        {
+            Port = port;
+            DisplayName = displayname;
+            RepeaterHost = repeaterHost;
+            RepeaterID = repeaterID;
         }
 
         /// <summary>
@@ -207,6 +217,65 @@ namespace NVNC
             catch (Exception ex) { Console.WriteLine(ex.ToString()); }
 
         }
+
+        /// <summary>
+        /// The main server loop. Listening on the selected port occurs here, and accepting incoming connections
+        /// </summary>
+        public void StartRepeater()
+        {
+            isRunning = true;
+            try
+            {
+                IPEndPoint remoteEP;
+                if (RepeaterHost.Contains(":"))
+                {
+                    string[] parts = RepeaterHost.Split(':');
+                    IPHostEntry ipHostInfo = Dns.GetHostEntry(parts[0]);
+                    IPAddress ipAddress = ipHostInfo.AddressList[0];
+                    remoteEP = new IPEndPoint(ipAddress, Int32.Parse(parts[1]));
+                }
+                else
+                {
+                    IPHostEntry ipHostInfo = Dns.GetHostEntry(RepeaterHost);
+                    IPAddress ipAddress = ipHostInfo.AddressList[0];
+                    remoteEP = new IPEndPoint(ipAddress, 5500);
+                }
+
+                localClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                localClient.Connect(remoteEP);
+                localClient.NoDelay = true; //Disable the Naggle algorithm
+
+                IPAddress localIP = IPAddress.Parse(((IPEndPoint)localClient.RemoteEndPoint).Address.ToString());
+                Console.WriteLine(localIP);
+
+                stream = new NetworkStream(localClient, true);
+                reader = new BigEndianBinaryReader(stream);
+                writer = new BigEndianBinaryWriter(stream);
+                zlibWriter = new ZlibCompressedWriter(stream);
+                clients.Add(localClient);
+            }
+            catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+        }
+
+        /// <summary>
+        /// Sends Server ID to the Repeater
+        /// </summary>
+        public void WriteRepeaterID()
+        {
+            try
+            {
+                String id = "ID:" + RepeaterID;
+                writer.Write(GetBytes(id.PadRight(250, '\0'))); //Need the 250 string length padded with null's. The repeater doesn't like anything but that oddly.
+                writer.Flush();
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine(ex.Message);
+                this.Close();
+                return;
+            }
+        }
+
         /// <summary>
         /// Reads VNC Protocol Version message (see RFB Doc v. 3.8 section 6.1.1)
         /// </summary>

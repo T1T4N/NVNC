@@ -33,6 +33,21 @@ namespace NVNC
         public int Port { get; private set; }
         public string Password { get; private set; }
 
+        private string _repeaterHost;
+        /// <summary>
+        /// The Repeater Host and port
+        /// <remarks>
+        /// Format as hostname[:port] or ipaddress[:port].
+        /// If no port is specified then it will use the default 5500 port
+        /// </remarks>
+        /// </summary>
+        public string RepeaterHost { get; set; }
+
+        /// <summary>
+        /// The server's Repeater Mode 2 ID. Must be a numerical value
+        /// </summary>
+        public string RepeaterID { get; set; }
+
         /// <summary>
         /// The VNC Server name.
         /// <remarks>The variable value should be non-null.</remarks>
@@ -52,6 +67,22 @@ namespace NVNC
             Port = port;
             Name = name;
 
+            Init();
+        }
+
+        public VncServer(string password, int port, string name, string repeaterHost, string repeaterID)
+        {
+            Password = password;
+            Port = port;
+            Name = name;
+            RepeaterHost = repeaterHost;
+            RepeaterID = repeaterID;
+
+            Init();
+        }
+
+        private void Init()
+        {
             Size screenSize = ScreenSize();
             fb = new Framebuffer(screenSize.Width, screenSize.Height)
             {
@@ -65,7 +96,7 @@ namespace NVNC
                 BlueMax = 0xFF,
                 GreenMax = 0xFF,
                 RedMax = 0xFF,
-                DesktopName = name
+                DesktopName = Name
             };
         }
 
@@ -144,6 +175,104 @@ namespace NVNC
                     //Start();
             }
         }
+
+        /// <summary>
+        /// Starts a Slightly Modified version of the Ultra's VNC's repeater Mode 2.
+        /// Normally when a UltraVNC server connects to the repeater. It would not ask 
+        /// for a password. It would just use the ID as the password. This is not 
+        /// something I liked. So this server will ask for a password. Suprisingly 
+        /// this is compatible with the Unix 1 repeater located:
+        /// 
+        /// http://www.uvnc.eu/download/repeater/uvncrepeater.tar.gz
+        /// 
+        /// I have not tested this compatiblity with any other UltraVNC repeater.
+        /// 
+        /// </summary>
+        public void StartRepeater()
+        {
+            if (String.IsNullOrEmpty(Name))
+                throw new ArgumentNullException("Name", "The VNC Server Name cannot be empty.");
+            if (Port == 0)
+                throw new ArgumentNullException("Port", "The VNC Server Port cannot be zero.");
+
+            if (String.IsNullOrEmpty(RepeaterHost))
+                throw new ArgumentNullException("RepeaterHost", "The Repeater Host can not be empty.");
+
+            if (String.IsNullOrEmpty(RepeaterID))
+                throw new ArgumentNullException("RepeaterID", "The Repeater ID can not be empty.");
+
+            Console.WriteLine("Started VNC Server at port: " + Port);
+
+            host = new VncHost(Port, Name, RepeaterHost, RepeaterID);
+            host.StartRepeater();
+
+            host.WriteRepeaterID();
+            Console.WriteLine("Wrote repeater ID");
+
+            host.WriteProtocolVersion();
+            Console.WriteLine("Wrote Protocol Version");
+
+            host.ReadProtocolVersion();
+            Console.WriteLine("Read Protocol Version");
+
+            Console.WriteLine("Awaiting Authentication");
+            if (!host.WriteAuthentication(Password))
+            {
+                Console.WriteLine("Authentication failed !");
+                host.Close();
+                StartRepeater();
+            }
+            else
+            {
+                Console.WriteLine("Authentication successfull !");
+
+                bool share = host.ReadClientInit();
+                Console.WriteLine("Share: " + share.ToString());
+
+                Console.WriteLine("Server name: " + fb.DesktopName);
+                host.WriteServerInit(this.fb);
+
+                while ((host.isRunning))
+                {
+                    switch (host.ReadServerMessageType())
+                    {
+                        case VncHost.ClientMessages.SetPixelFormat:
+                            Console.WriteLine("Read SetPixelFormat");
+                            Framebuffer f = host.ReadSetPixelFormat(fb.Width, fb.Height);
+                            if (f != null)
+                                fb = f;
+                            break;
+                        case VncHost.ClientMessages.ReadColorMapEntries:
+                            Console.WriteLine("Read ReadColorMapEntry");
+                            host.ReadColorMapEntry();
+                            break;
+                        case VncHost.ClientMessages.SetEncodings:
+                            Console.WriteLine("Read SetEncodings");
+                            host.ReadSetEncodings();
+                            break;
+                        case VncHost.ClientMessages.FramebufferUpdateRequest:
+                            Console.WriteLine("Read FrameBufferUpdateRequest");
+                            host.ReadFrameBufferUpdateRequest(fb);
+                            break;
+                        case VncHost.ClientMessages.KeyEvent:
+                            Console.WriteLine("Read KeyEvent");
+                            host.ReadKeyEvent();
+                            break;
+                        case VncHost.ClientMessages.PointerEvent:
+                            Console.WriteLine("Read PointerEvent");
+                            host.ReadPointerEvent();
+                            break;
+                        case VncHost.ClientMessages.ClientCutText:
+                            Console.WriteLine("Read CutText");
+                            host.ReadClientCutText();
+                            break;
+                    }
+                }
+                if (!host.isRunning)
+                    StartRepeater();
+            }
+        }
+
         /// <summary>
         /// Closes all active connections, and stops the VNC Server from listening on the specified port.
         /// </summary>
